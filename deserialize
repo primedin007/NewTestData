@@ -6,3 +6,9 @@ public static T Deserialize<T>(byte[] data) where T : class
             return formatter.Deserialize(memoryStream) as T;
         }
     }
+
+
+MyClass deserializedObject = Deserialize<MyClass>(serializedData);
+
+        // Now you have the deserialized object
+        Console.WriteLine("Deserialized data: " + deserializedObject.Data);
