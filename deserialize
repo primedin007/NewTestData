@@ -12,3 +12,12 @@ MyClass deserializedObject = Deserialize<MyClass>(serializedData);
 
         // Now you have the deserialized object
         Console.WriteLine("Deserialized data: " + deserializedObject.Data);
+
+
+
+ FileOutputStream fos = new FileOutputStream(filePath);
+            // Wrap the FileOutputStream with ObjectOutputStream
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+        ) {
+            // Serialize the object into bytes and write it to the file
+            oos.writeObject(entity);
