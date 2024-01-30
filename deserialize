@@ -15,9 +15,15 @@ MyClass deserializedObject = Deserialize<MyClass>(serializedData);
 
 
 
- FileOutputStream fos = new FileOutputStream(filePath);
+try (
+            // Create a FileOutputStream
+            FileOutputStream fos = new FileOutputStream(filePath);
             // Wrap the FileOutputStream with ObjectOutputStream
             ObjectOutputStream oos = new ObjectOutputStream(fos);
         ) {
             // Serialize the object into bytes and write it to the file
             oos.writeObject(entity);
+            System.out.println("Entity data has been written to the file.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
