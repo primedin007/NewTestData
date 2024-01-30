@@ -1,0 +1,8 @@
+public static T Deserialize<T>(byte[] data) where T : class
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        using (MemoryStream memoryStream = new MemoryStream(data))
+        {
+            return formatter.Deserialize(memoryStream) as T;
+        }
+    }
