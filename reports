@@ -1,0 +1,95 @@
+protected void btnSubmit2_Click(object sender, EventArgs e)
+    {
+        try
+        {
+
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter();
+            SqlConnection con = new SqlConnection(strCon);
+            SqlCommand myCommand = new SqlCommand();
+
+            if (ddlRep.SelectedIndex > 0)
+            {
+                myCommand.Connection = con;
+                myCommand.CommandText = ddlRep.SelectedItem.Value;
+                myCommand.CommandType = CommandType.StoredProcedure;
+                myCommand.CommandTimeout = 120;
+
+                string qry = @"SELECT PARAMETER_NAME, DATA_TYPE, ORDINAL_POSITION FROM INFORMATION_SCHEMA.PARAMETERS WHERE SPECIFIC_NAME = '"+ ddlRep.SelectedItem.Value+"'";
+
+                dt = GetQryData(qry);
+
+                if (dt.Rows.Count > 0)
+                {
+                    int i = 0;
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        object paramValue = DBNull.Value;
+                        string ParamName = dr["PARAMETER_NAME"].ToString();
+                        string dtype = dr["DATA_TYPE"].ToString();
+
+                        if (dr["DATA_TYPE"].ToString().ToLower().Contains("char"))
+                        {
+                            paramValue = GetValue(ParamName);
+                        }
+                        else if (dr["DATA_TYPE"].ToString().ToLower().Contains("int"))
+                        {
+                            paramValue = GetValue(ParamName);
+                        }
+                        else if (dr["DATA_TYPE"].ToString().ToLower().Contains("money"))
+                        {
+                            paramValue = GetValue(ParamName);
+                        }
+                        else if (dr["DATA_TYPE"].ToString().ToLower().Contains("date"))
+                        {
+                            paramValue = GetValue(ParamName);
+                        }
+
+                        if (paramValue != "{}")
+                        {
+                            myCommand.Parameters.AddWithValue(ParamName, paramValue);
+                        }
+                        else
+                        {
+                            myCommand.Parameters.AddWithValue("", "");
+                        }
+                    }
+
+                    DataTable dt1 = new DataTable();
+                    da.SelectCommand = myCommand;
+                    dt1.TableName = "Test";
+                    da.Fill(dt1);
+
+                    if (dt1.Rows.Count > 0)
+                    {
+                        grdRepo.DataSource = dt1;
+                        grdRepo.DataBind();
+
+                        grdRepo.UseAccessibleHeader = true;
+                        grdRepo.HeaderRow.TableSection = TableRowSection.TableHeader;
+
+                        GetParameters(ddlRep.SelectedItem.Value);
+                    }
+                }
+                Session["LoginID"] = ViewState["LogName"];
+                Session["sDepName"] = ViewState["DepName"];
+                Session["FileTypeAccess"] = ViewState["FileType"];
+                Session["GroupAccess"] = ViewState["GrpAccess"];
+                Session["Role"] = ViewState["RoleId"];
+            }
+            else
+            {
+                AlrtMsg("Please select report");
+            }
+        }
+        catch (Exception ex)
+        {
+            lg.LogWrite(MethodBase.GetCurrentMethod().Name.ToString(), ex.Message, MethodBase.GetCurrentMethod().DeclaringType.Name.ToString(), "", "");
+
+            Session["LoginID"] = ViewState["LogName"];
+            Session["sDepName"] = ViewState["DepName"];
+            Session["FileTypeAccess"] = ViewState["FileType"];
+            Session["GroupAccess"] = ViewState["GrpAccess"];
+            Session["Role"] = ViewState["RoleId"];
+        }
+    }
